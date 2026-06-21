@@ -78,6 +78,7 @@ Developed & tested on this exact stack — matching it is recommended.
 ├── start_multidomain.sh       # per-UAV DDS-domain launcher (multi-machine topology)
 ├── record_baseline.sh         # capture nominal behavior for regression
 ├── regression_logger.py
+├── tools/zenoh/               # Zenoh bridge allowlist (/swarm/* only); drop the bridge binary here
 ├── docs/images/               # ← put your simulation screenshots here
 └── src/
     ├── laplacian_interfaces/  # custom ROS 2 messages (ament_cmake / rosidl)
@@ -190,12 +191,60 @@ ros2 launch laplacian_swarm swarm_bringup.launch.py profile:=semi
 
 ---
 
+## Networking — DDS vs Zenoh Bridge
+
+The swarm can run in two network topologies. Both use the exact same nodes and code; only the transport changes.
+
+| Mode | When | Transport |
+|------|------|-----------|
+| **Single shared DDS domain** | Default SITL on one machine (`launch_swarm.sh`) | All UAVs share one `ROS_DOMAIN_ID`; direct DDS discovery |
+| **Per-UAV domain + Zenoh bridge** | Multi-machine / real-hardware topology (`start_multidomain.sh`) | Each UAV gets its **own** `ROS_DOMAIN_ID` (10/11/12) and its own uXRCE-DDS port (8888/8889/8890); no direct DDS discovery between UAVs |
+
+### How the Zenoh bridge works
+
+In the multi-domain mode there is **no shared DDS bus**. The only path between drones is one `zenoh-bridge-ros2dds` instance per domain. The bridge is allowlisted to carry **only** the `/swarm/*` topics (mission, agent_state, zone, zone_ack) across drones. Everything private to a drone — `/fmu/*`, `vision/*`, `control/*`, `localization/*`, `px4/*` — never leaves its own domain.
+
+This mirrors the real hardware setup, where each drone is a separate computer on a Wi-Fi mesh (`bat0`) and the drones discover each other over Zenoh instead of plain DDS multicast. On the `real` profile this is selected by `network_mode: zenoh_bat0` in `profile_real.yaml`.
+
+The allowlist lives in [`tools/zenoh/bridge_allowlist.json5`](tools/zenoh/bridge_allowlist.json5):
+
+```json5
+{
+  plugins: {
+    ros2dds: {
+      allow: {
+        publishers:  ["/swarm/.*"],
+        subscribers: ["/swarm/.*"],
+      },
+    },
+  },
+}
+```
+
+### Running the Zenoh / multi-domain mode
+
+1. Get the bridge binary — download `zenoh-bridge-ros2dds` (from the [eclipse-zenoh/zenoh-plugin-ros2dds releases](https://github.com/eclipse-zenoh/zenoh-plugin-ros2dds/releases)) and place it in `tools/zenoh/`.
+2. Launch everything:
+   ```bash
+   ./start_multidomain.sh
+   ```
+   This starts, per UAV: a uXRCE-DDS agent on its own port, PX4+Gazebo, a Zenoh bridge bound to its domain with the `/swarm/*` allowlist, and the swarm nodes. One bridge per domain peers with the others to relay only the swarm topics.
+
+Manual single-bridge example for one domain:
+```bash
+cd tools/zenoh
+ROS_DOMAIN_ID=10 ./zenoh-bridge-ros2dds peer -d 10 -c bridge_allowlist.json5
+```
+
+---
+
 ##  Troubleshooting
 
 - **Not all 3 drones spawn** → increase the `sleep 18` in `launch_swarm.sh` (3 PX4 + Gazebo need time on a laptop).
 - **Agents idle after launch** → in `semi` profile you must Arm + Takeoff each drone from QGroundControl.
 - **No PX4 topics** → confirm `MicroXRCEAgent udp4 -p 8888` is running and `px4_msgs` is built.
 - **Camera topic missing** → install `ros-jazzy-ros-gz-image`; the bridge remaps the Gazebo camera to `/uavX/down_cam/image`.
+- **Drones don't see each other in multi-domain mode** → make sure `zenoh-bridge-ros2dds` is in `tools/zenoh/` and a bridge is running for each domain; only `/swarm/*` crosses domains by design.
 
 ---
 

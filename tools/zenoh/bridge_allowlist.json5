@@ -1,0 +1,10 @@
+{
+  plugins: {
+    ros2dds: {
+      allow: {
+        publishers: ["/swarm/.*"],
+        subscribers: ["/swarm/.*"],
+      },
+    },
+  },
+}
