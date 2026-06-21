@@ -41,12 +41,6 @@
   <img src="docs/images/QGC.png"           alt="QGroundControl arm and takeoff"     width="60%">
 </p>
 
-| Image | What it shows |
-|-------|---------------|
-| `Formations.png`    | The swarm holding formation in flight |
-| `Blue_Red_Area.png` | Color zone detection — blue/red areas |
-| `QGC.png`           | QGroundControl view used to arm and take off the drones |
-
 ---
 
 ## Tech Stack / Versions
