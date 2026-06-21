@@ -30,7 +30,7 @@
 
 ---
 
-## 📸 Screenshots & Gallery
+## Gallery
 
 > Simulation captures (Gazebo + image-processing output). Drop your images in [`docs/images/`](docs/images/) and they'll render here.
 
