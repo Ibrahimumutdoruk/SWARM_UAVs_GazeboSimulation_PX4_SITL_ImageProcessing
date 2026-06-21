@@ -32,26 +32,21 @@
 
 ## Gallery
 
-> Simulation captures (Gazebo + image-processing output). Drop your images in [`docs/images/`](docs/images/) and they'll render here.
+Captures from the Gazebo SITL simulation and the image-processing output.
 
 <p align="center">
-  <!-- Replace these with your own screenshots -->
-  <img src="docs/images/gazebo_swarm.png"   alt="3 drones in Gazebo SITL"        width="45%">
-  <img src="docs/images/formation.png"       alt="V formation flight"             width="45%">
+  <img src="docs/images/Formations.png"    alt="Swarm formation flight"             width="45%">
+  <img src="docs/images/Blue_Red_Area.png" alt="Blue/red color zone detection"      width="45%">
 </p>
 <p align="center">
-  <img src="docs/images/qr_detection.png"    alt="QR mission detection (OpenCV)"  width="45%">
-  <img src="docs/images/color_zones.png"     alt="Color zone detection"           width="45%">
+  <img src="docs/images/QGC.png"           alt="QGroundControl arm and takeoff"     width="60%">
 </p>
 
 | Image | What it shows |
 |-------|---------------|
-| `gazebo_swarm.png` | The 3 PX4 drones spawned in the Gazebo world |
-| `formation.png`    | Drones holding a V formation |
-| `qr_detection.png` | OpenCV decoding the mission QR code from the down camera |
-| `color_zones.png`  | Detected/fused color zones |
-
-*(Filenames above are placeholders — add your own and update the table.)*
+| `Formations.png`    | The swarm holding formation in flight |
+| `Blue_Red_Area.png` | Color zone detection — blue/red areas |
+| `QGC.png`           | QGroundControl view used to arm and take off the drones |
 
 ---
 
