@@ -1,0 +1,8 @@
+profile: sitl
+initial_arm_source: sitl_operator
+initial_offboard_source: sitl_operator
+camera_backend: gazebo
+localization_backend: px4_simulated_gnss
+network_mode: direct
+auto_initial_arm: true                  # current SITL: agents self-arm; baseline behavior
+auto_initial_offboard: true

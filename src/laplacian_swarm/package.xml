@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>laplacian_swarm</name>
+  <version>0.1.0</version>
+  <description>Decentralized swarm agents over PX4 Offboard</description>
+  <maintainer email="dev@laplacian.local">laplacian</maintainer>
+  <license>MIT</license>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>px4_msgs</exec_depend>
+  <exec_depend>laplacian_interfaces</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>cv_bridge</exec_depend>
+  <exec_depend>ros_gz_image</exec_depend>
+  <export><build_type>ament_python</build_type></export>
+</package>

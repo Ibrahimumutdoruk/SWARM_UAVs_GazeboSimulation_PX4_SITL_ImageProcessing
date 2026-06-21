@@ -1,0 +1,9 @@
+profile: semi
+initial_arm_source: qgc                 # operator presses Arm + Takeoff in QGroundControl
+initial_offboard_source: software       # software claims Offboard immediately once armed -
+                                          # no separate manual mode-switch step needed
+camera_backend: gazebo
+localization_backend: px4_simulated_gnss
+network_mode: direct
+auto_initial_arm: false                 # operator arms/takes off - software never self-arms
+auto_initial_offboard: true             # but software claims Offboard the moment it's armed

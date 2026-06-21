@@ -1,0 +1,34 @@
+# Madde 3 — per-vehicle config (architecture §16.1).
+# Driven by launch; old behavior unchanged when profile=sitl.
+vehicles:
+  - uav_id: 0
+    system_id: 1
+    namespace: /uav0
+    spawn_gz: [106.98, 35.00, 0.1]      # gz [E,N,U] — MUST match start_sitl_swarm.sh
+    gz_model: x500_0
+    slot_id: 0
+    return_altitude_agl_m: 18.0         # placeholder, M11 uses
+    ros_domain_id: 10                   # Madde 12: separate DDS domain per UAV
+    xrce_port: 8888
+
+  - uav_id: 1
+    system_id: 2
+    namespace: /uav1
+    spawn_gz: [105.00, 34.95, 0.1]
+    gz_model: x500_1
+    slot_id: 1
+    return_altitude_agl_m: 21.0
+    ros_domain_id: 11
+    xrce_port: 8889
+
+  - uav_id: 2
+    system_id: 3
+    namespace: /uav2
+    spawn_gz: [103.41, 34.90, 0.1]
+    gz_model: x500_2
+    slot_id: 2
+    return_altitude_agl_m: 24.0
+    ros_domain_id: 12
+    xrce_port: 8890
+
+team_id: 1                              # judges announce; team_1 -> n1 in QR JSON

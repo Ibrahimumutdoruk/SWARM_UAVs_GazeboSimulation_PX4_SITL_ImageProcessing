@@ -1,0 +1,9 @@
+std_msgs/Header header
+uint8 drone_id
+string color
+float32 e
+float32 n
+float32 confidence
+float32 uncertainty_m
+uint32 hash
+bool locked

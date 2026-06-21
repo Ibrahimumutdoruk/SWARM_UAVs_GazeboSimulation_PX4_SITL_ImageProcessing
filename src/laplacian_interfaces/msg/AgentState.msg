@@ -1,0 +1,12 @@
+std_msgs/Header header
+uint8 drone_id
+float32[3] position
+float32[3] velocity
+float32 yaw
+uint8 fsm_state
+bool ready
+bool armed
+bool offboard_active
+uint8 nav_state
+bool detaching
+string note

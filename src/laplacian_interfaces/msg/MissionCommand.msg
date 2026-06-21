@@ -1,0 +1,14 @@
+std_msgs/Header header
+uint32 seq
+uint8 phase
+uint8 target_qr
+uint8 formation
+float32 spacing
+float32 altitude
+float32 pitch_deg
+float32 roll_deg
+float32 wait_s
+bool split_active
+uint8 split_drone_id
+string split_color
+float32 split_wait_s

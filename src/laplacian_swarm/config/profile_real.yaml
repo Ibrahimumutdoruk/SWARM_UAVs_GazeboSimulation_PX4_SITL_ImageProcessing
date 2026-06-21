@@ -1,0 +1,8 @@
+profile: real
+initial_arm_source: rc
+initial_offboard_source: rc
+camera_backend: physical
+localization_backend: px4_f9p_gnss
+network_mode: zenoh_bat0
+auto_initial_arm: false                 # real flight: arm only from RC
+auto_initial_offboard: false            # real flight: offboard only from RC

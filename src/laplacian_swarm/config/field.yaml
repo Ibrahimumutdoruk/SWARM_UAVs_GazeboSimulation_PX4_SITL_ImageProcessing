@@ -1,0 +1,26 @@
+# Madde 3 — field manifest (architecture §16.2). Numbers from the live SITL world.
+# QR coords in gz-ENU (east, north, ground_up).
+qr_map:
+  1: [98,  0,  0.1]
+  2: [112, 0,  0.1]
+  3: [120, 10, 0.1]
+  4: [112, 20, 0.1]
+  5: [98,  20, 0.1]
+  6: [90,  10, 0.1]
+
+first_qr: 1
+geofence:
+  min_altitude_agl_m: 3.0
+  max_altitude_agl_m: 30.0
+
+# Madde 6 — FIELD_ORIGIN: WGS84 point that defines gz-ENU/FIELD_ENU [0,0,0].
+# This is PX4_HOME_LAT/LON/ALT from scripts/start_sitl_swarm.sh, NOT the gz
+# world file's <spherical_coordinates> - PX4 SITL's GPS plugin (and therefore
+# every vehicle's ref_lat/ref_lon) is anchored to the env var, confirmed by
+# back-computing uav0's live ref_lat/ref_lon against its known spawn_gz.
+field_origin:
+  lat_deg: 38.325954
+  lon_deg: 33.992143
+  alt_m: 980.0
+
+# home_pads / search_polygon — left empty until later items (M7/M9).
