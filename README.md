@@ -91,6 +91,13 @@ Developed & tested on this exact stack — matching it is recommended.
     └── px4_msgs/              # PX4 uORB ↔ ROS 2 messages (git submodule)
 ```
 
+### Packages
+| Package | Build type | Purpose |
+|---------|-----------|---------|
+| `laplacian_interfaces` | `ament_cmake` + `rosidl` | Custom swarm broadcast + telemetry messages |
+| `laplacian_swarm` | `ament_python` | All swarm nodes, launch files, and configs |
+| `px4_msgs` | `ament_cmake` | PX4 uORB ↔ ROS 2 messages (git submodule) |
+
 ### Nodes (`laplacian_swarm`)
 | Node | Role |
 |------|------|
@@ -99,6 +106,54 @@ Developed & tested on this exact stack — matching it is recommended.
 | `localization_node` | Converts PX4 GNSS → shared `FIELD_ENU` frame |
 | `vision_node` | OpenCV QR + color detection from the downward camera |
 | `mission_trigger` | One-shot START: latches formation / altitude / QR target |
+
+---
+
+## Node Architecture
+
+```
+                 ┌──────────────────────────────────────────────┐
+   PX4 (SITL/HW) │  /fmu/*  (uORB over uXRCE-DDS, UDP 8888)      │
+                 └──────────────┬───────────────────────────────┘
+                                │  (ONLY this node touches /fmu/*)
+                       ┌────────▼─────────┐
+                       │ px4_gateway_node │  arm/offboard/setpoints + Px4Status
+                       └────────┬─────────┘
+   GNSS ───────────────► localization_node ──► LocalizationState (FIELD_ENU)
+   down camera ────────► vision_node ────────► QrDetection / ColorDetection
+                                │
+                       ┌────────▼─────────┐    broadcast AgentState / Zone* / MissionCommand
+                       │ swarm_agent_node │◄──────────► (other 2 agents, decentralized)
+                       └──────────────────┘
+                                ▲
+                       mission_trigger (one-shot START)
+```
+
+- **`swarm_agent_node`** — the decentralized FSM: formation math, separation/collision, QR mission logic, color search, split/rejoin, return. Runs identically per drone.
+- **`px4_gateway_node`** — sole owner of the PX4 interface; isolates `/fmu/*` so the rest of the code is hardware-agnostic.
+- **`localization_node`** — converts PX4 GNSS to the shared `FIELD_ENU` frame all agents agree on.
+- **`vision_node`** — OpenCV-based QR decoding + color zone detection from the downward camera.
+- **`mission_trigger`** — latches the mission parameters once; does **not** arm anything.
+
+---
+
+## Custom Messages
+
+Defined in `src/laplacian_interfaces/msg/`:
+
+| Message | Role |
+|---------|------|
+| `AgentState.msg` | Per-agent broadcast: pose, FSM state, health |
+| `Px4Status.msg` | PX4 health / arming / land-detector status |
+| `LocalizationState.msg` | Position in shared `FIELD_ENU` frame |
+| `ControlSetpoint.msg` | Desired setpoint to the gateway |
+| `ControlCommand.msg` | Arm / offboard / mode command |
+| `CommandResult.msg` | Result / ack of a control command |
+| `MissionCommand.msg` | Mission propose / commit |
+| `QrDetection.msg` | Decoded QR mission payload |
+| `ColorDetection.msg` | Detected color observation |
+| `ZoneObservation.msg` | Color-zone observation for fusion |
+| `ZoneAck.msg` | Zone fusion acknowledgement |
 
 ---
 
@@ -115,6 +170,8 @@ sudo apt install ros-jazzy-ros-gz ros-jazzy-ros-gz-image ros-jazzy-cv-bridge
 sudo apt install ros-jazzy-rosidl-default-generators ros-jazzy-std-msgs ros-jazzy-sensor-msgs \
                  python3-colcon-common-extensions python3-rosdep
 ```
+
+**ROS dependencies (from `package.xml`):** `rclpy`, `std_msgs`, `sensor_msgs`, `cv_bridge`, `ros_gz_image`, `px4_msgs`, `laplacian_interfaces`.
 
 **Python libs:** `opencv-python` (4.13.0), `numpy` (1.26.4), `pyyaml`, `setuptools`.
 
@@ -138,6 +195,9 @@ rosdep install --from-paths src --ignore-src -r -y
 colcon build --symlink-install
 source install/setup.bash
 ```
+
+> Building selectively? Build `laplacian_interfaces` before `laplacian_swarm`:
+> `colcon build --packages-select laplacian_interfaces && colcon build --packages-select laplacian_swarm`
 
 ---
 
