@@ -375,8 +375,3 @@ ROS_DOMAIN_ID=10 ./zenoh-bridge-ros2dds peer -d 10 -c bridge_allowlist.json5
 - **Drones don't see each other in multi-domain mode** → make sure `zenoh-bridge-ros2dds` is in `tools/zenoh/` and a bridge is running for each domain; only `/swarm/*` crosses domains by design.
 
 ---
-
-
-## Author
-
-**Ibrahim Umut Doruk** · [@Ibrahimumutdoruk](https://github.com/Ibrahimumutdoruk)
