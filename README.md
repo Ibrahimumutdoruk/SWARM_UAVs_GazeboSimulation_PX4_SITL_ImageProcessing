@@ -32,7 +32,6 @@
 
 ## Gallery
 
-Captures from the Gazebo SITL simulation and the image-processing output.
 
 <p align="center">
   <img src="docs/images/Formations.png"    alt="Swarm formation flight"             width="45%">
