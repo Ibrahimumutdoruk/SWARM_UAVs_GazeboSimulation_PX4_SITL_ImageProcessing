@@ -1,4 +1,4 @@
-<h1 align="center">🚁 SWARM UAVs — Gazebo PX4 SITL Simulation & Image Processing</h1>
+<h1 align="center"> SWARM UAVs — Gazebo PX4 SITL Simulation & Image Processing</h1>
 
 <p align="center">
   <b>A decentralized 3× drone autonomous swarm</b> flying in <b>Gazebo SITL</b> on <b>PX4 Offboard</b>,
@@ -17,16 +17,16 @@
 
 ---
 
-## ✨ Highlights
+##  Highlights
 
-- 🧠 **Fully decentralized** — every drone runs its own ROS 2 agent and FSM; there is **no central commander**. The swarm coordinates through broadcast messages.
-- 🎯 **Formation flight** — V / line formations with configurable altitude and spacing.
-- 👁️ **Image processing** — OpenCV pipeline on each drone's downward camera:
+-  **Fully decentralized** — every drone runs its own ROS 2 agent and FSM; there is **no central commander**. The swarm coordinates through broadcast messages.
+-  **Formation flight** — V / line formations with configurable altitude and spacing.
+-  **Image processing** — OpenCV pipeline on each drone's downward camera:
   - **QR mission decoding** — the mission is read live from a QR code in the world.
   - **Color zone detection & fusion** — drones detect and agree on colored zones.
-- 🔀 **Split → search → rejoin** — the formation can break apart to search and then reform.
-- 🛡️ **Collision avoidance & autonomous return**.
-- 🔁 **One codebase for sim & real** — switch behavior with a single profile (`sitl` / `semi` / `real`).
+-  **Split → search → rejoin** — the formation can break apart to search and then reform.
+-  **Collision avoidance & autonomous return**.
+-  **One codebase for sim & real** — switch behavior with a single profile (`sitl` / `semi` / `real`).
 
 ---
 
@@ -55,7 +55,7 @@
 
 ---
 
-## 🧰 Tech Stack / Versions
+## Tech Stack / Versions
 
 Developed & tested on this exact stack — matching it is recommended.
 
@@ -74,7 +74,7 @@ Developed & tested on this exact stack — matching it is recommended.
 
 ---
 
-## 📦 Repository Layout
+##  Repository Layout
 
 ```
 .
@@ -106,7 +106,7 @@ Developed & tested on this exact stack — matching it is recommended.
 
 ---
 
-## 🔧 Dependencies
+##  Dependencies
 
 ```bash
 # ROS 2 Jazzy core
@@ -126,7 +126,7 @@ sudo apt install ros-jazzy-rosidl-default-generators ros-jazzy-std-msgs ros-jazz
 
 ---
 
-## 🏗️ Build
+##  Build
 
 ```bash
 # 1. Source ROS 2
@@ -145,7 +145,7 @@ source install/setup.bash
 
 ---
 
-## ▶️ Run the Simulation
+##  Run the Simulation
 
 ### One command
 ```bash
@@ -191,11 +191,11 @@ All config lives in `src/laplacian_swarm/config/`.
 ros2 launch laplacian_swarm swarm_bringup.launch.py profile:=semi
 ```
 
-> ⚠️ The `spawn_gz` poses in `vehicles.yaml` **must match** `PX4_GZ_MODEL_POSE` in `scripts/start_sitl_swarm.sh`.
+> The `spawn_gz` poses in `vehicles.yaml` **must match** `PX4_GZ_MODEL_POSE` in `scripts/start_sitl_swarm.sh`.
 
 ---
 
-## 🩺 Troubleshooting
+##  Troubleshooting
 
 - **Not all 3 drones spawn** → increase the `sleep 18` in `launch_swarm.sh` (3 PX4 + Gazebo need time on a laptop).
 - **Agents idle after launch** → in `semi` profile you must Arm + Takeoff each drone from QGroundControl.
@@ -204,10 +204,7 @@ ros2 launch laplacian_swarm swarm_bringup.launch.py profile:=semi
 
 ---
 
-## 📄 License
 
-MIT.
-
-## 👤 Author
+## Author
 
 **Ibrahim Umut Doruk** · [@Ibrahimumutdoruk](https://github.com/Ibrahimumutdoruk)
