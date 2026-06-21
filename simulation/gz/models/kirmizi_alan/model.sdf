@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <model name="kirmizi_alan">
+    <static>true</static>
+    <link name="link">
+      <visual name="visual">
+        <geometry><plane><normal>0 0 1</normal><size>1.2 1.2</size></plane></geometry>
+        <material><ambient>1 0 0 1</ambient><diffuse>1 0 0 1</diffuse></material>
+      </visual>
+    </link>
+  </model>
+</sdf>

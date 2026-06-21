@@ -79,6 +79,7 @@ Developed & tested on this exact stack — matching it is recommended.
 ├── record_baseline.sh         # capture nominal behavior for regression
 ├── regression_logger.py
 ├── tools/zenoh/               # Zenoh bridge allowlist (/swarm/* only); drop the bridge binary here
+├── simulation/gz/             # Gazebo world (default.sdf) + x500 down-camera model + field models
 ├── docs/images/               # ← put your simulation screenshots here
 └── src/
     ├── laplacian_interfaces/  # custom ROS 2 messages (ament_cmake / rosidl)
@@ -188,6 +189,80 @@ ros2 launch laplacian_swarm swarm_bringup.launch.py profile:=semi
 ```
 
 > The `spawn_gz` poses in `vehicles.yaml` **must match** `PX4_GZ_MODEL_POSE` in `scripts/start_sitl_swarm.sh`.
+
+---
+
+## Simulation World & Camera
+
+The Gazebo assets live in [`simulation/gz/`](simulation/gz/):
+
+```
+simulation/gz/
+├── worlds/default.sdf      # the competition world
+└── models/
+    ├── x500/               # x500 drone + downward QR/color camera (model.sdf)
+    ├── mavi_alan/          # blue area
+    ├── kirmizi_alan/       # red area
+    └── qr_11 .. qr_66/     # QR mission markers
+```
+
+### The world (`worlds/default.sdf`)
+
+`default.sdf` is the custom field used for the mission. It includes the colored areas the drones detect and fuse, plus the QR markers that carry the mission:
+
+```xml
+<include><name>mavi_alan</name>    <uri>model://mavi_alan</uri>    <pose>105 0  0.08 0 0 0</pose></include>
+<include><name>kirmizi_alan</name> <uri>model://kirmizi_alan</uri> <pose>117 5  0.08 0 0 0</pose></include>
+<include><name>qr_11</name> <uri>model://qr_11</uri> <pose>98  0  0.1 0 0 0</pose></include>
+<include><name>qr_22</name> <uri>model://qr_22</uri> <pose>112 0  0.1 0 0 0</pose></include>
+<!-- qr_33 .. qr_66 -->
+```
+
+- `mavi_alan` = blue area, `kirmizi_alan` = red area — the targets for the color zone detection / fusion.
+- `qr_11 … qr_66` = the QR markers the `vision_node` decodes for the mission.
+
+### The downward camera (`models/x500/model.sdf`)
+
+Each drone carries a downward-facing camera (`fpv_camera`) on a dedicated `camera_link`, used by `vision_node` for QR decoding and color detection. The sensor settings:
+
+```xml
+<!-- downward QR/color camera -->
+<link name="camera_link">
+  <pose relative_to="base_link">0.2 0 -0.05 0 0 0</pose>   <!-- mounted under the body -->
+  <sensor name="fpv_camera" type="camera">
+    <pose>0 0 0 0 1.5708 0</pose>                           <!-- pitched 90° to look straight down -->
+    <camera>
+      <horizontal_fov>1.2217305</horizontal_fov>            <!-- ~70° -->
+      <image><width>1920</width><height>1080</height><format>R8G8B8</format></image>
+      <clip><near>0.1</near><far>1000</far></clip>
+    </camera>
+    <always_on>1</always_on>
+    <update_rate>90</update_rate>
+    <visualize>true</visualize>
+  </sensor>
+</link>
+```
+
+| Setting | Value | Notes |
+|---------|-------|-------|
+| Resolution | 1920 × 1080 (RGB) | `R8G8B8` |
+| Horizontal FOV | 1.2217 rad (~70°) | |
+| Orientation | pitched 1.5708 rad (90°) | looks straight down |
+| Mount | `0.2 0 -0.05` rel. to `base_link` | under the airframe |
+| Update rate | 90 Hz | |
+| Clip | 0.1 m – 1000 m | |
+
+The Gazebo image topic is bridged into ROS 2 (via `ros_gz_image`) and remapped to `/uavX/down_cam/image`, which `vision_node` subscribes to.
+
+### Installing the assets
+
+Gazebo finds models/worlds via path env vars. Point them at this folder (or copy into your PX4 sim tree):
+
+```bash
+export GZ_SIM_RESOURCE_PATH=$PWD/simulation/gz/models:$PWD/simulation/gz/worlds:$GZ_SIM_RESOURCE_PATH
+```
+
+> The drone model in `start_sitl_swarm.sh` is `gz_x500`; the `model.sdf` here is the matching x500 with the downward camera link added.
 
 ---
 
