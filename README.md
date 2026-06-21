@@ -171,7 +171,7 @@ ros2 run laplacian_swarm mission_trigger --ros-args -p formation:=V -p altitude:
 
 ---
 
-## ⚙️ Configuration & Profiles
+##  Configuration & Profiles
 
 All config lives in `src/laplacian_swarm/config/`.
 
